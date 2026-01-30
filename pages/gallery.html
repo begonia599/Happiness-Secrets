@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>错误页面展示 - Happiness Secrets</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Karla:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #1a1a1a;
+            --text-primary: #e8e8e8;
+            --text-secondary: #8a8a8a;
+            --accent-red: #ff4757;
+            --accent-orange: #ff8c42;
+            --accent-blue: #4287f5;
+        }
+
+        body {
+            font-family: 'Karla', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .noise {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 4rem;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .back-link {
+            display: inline-block;
+            color: var(--text-secondary);
+            text-decoration: none;
+            margin-bottom: 2rem;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: var(--text-primary);
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 0.75rem 1.5rem;
+            background: var(--bg-secondary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn:hover {
+            border-color: rgba(255, 255, 255, 0.3);
+            color: var(--text-primary);
+        }
+
+        .tab-btn.active {
+            background: var(--accent-red);
+            border-color: var(--accent-red);
+            color: white;
+        }
+
+        h1 {
+            font-family: 'DM Serif Display', serif;
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 400;
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+        }
+
+        .subtitle {
+            font-size: clamp(1rem, 2vw, 1.25rem);
+            color: var(--text-secondary);
+            font-weight: 300;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 3rem;
+            margin-bottom: 4rem;
+        }
+
+        .error-card {
+            background: var(--bg-secondary);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            animation: fadeIn 0.8s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .error-card.hidden {
+            display: none;
+        }
+
+        .error-card:nth-child(1) { animation-delay: 0.1s; }
+        .error-card:nth-child(2) { animation-delay: 0.2s; }
+        .error-card:nth-child(3) { animation-delay: 0.3s; }
+
+        .error-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .preview-frame {
+            width: 100%;
+            height: 400px;
+            border: none;
+            background: white;
+            display: block;
+        }
+
+        .card-content {
+            padding: 2rem;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .error-code {
+            font-family: 'DM Serif Display', serif;
+            font-size: 2rem;
+            font-weight: 400;
+        }
+
+        .error-code.code-404 { color: var(--accent-red); }
+        .error-code.code-502 { color: var(--accent-orange); }
+        .error-code.code-503 { color: var(--accent-blue); }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-desc {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 0.75rem 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            text-align: center;
+            color: var(--text-primary);
+            background: transparent;
+        }
+
+        .btn:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .btn-primary {
+            background: var(--accent-red);
+            border-color: var(--accent-red);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #ff3545;
+            border-color: #ff3545;
+        }
+
+        .usage-section {
+            background: var(--bg-secondary);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            animation: fadeIn 0.8s ease-out 0.4s both;
+        }
+
+        .usage-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .usage-desc {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .url-display {
+            background: var(--bg-primary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            padding: 1rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            color: var(--accent-orange);
+            margin-bottom: 1rem;
+            word-break: break-all;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 2rem 1rem;
+            }
+
+            .gallery-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .preview-frame {
+                height: 300px;
+            }
+
+            .card-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="noise"></div>
+    
+    <div class="container">
+        <header>
+            <a href="/" class="back-link">← 返回首页</a>
+            <h1>错误页面展示</h1>
+            <p class="subtitle">
+                浏览所有可用的错误页面样式，选择适合你的设计
+            </p>
+            
+            <div class="filter-tabs">
+                <button class="tab-btn active" data-code="all">全部</button>
+                <button class="tab-btn" data-code="404">404 页面</button>
+                <button class="tab-btn" data-code="502">502 页面</button>
+                <button class="tab-btn" data-code="503">503 页面</button>
+            </div>
+        </header>
+
+        <div class="gallery-grid">
+            <!-- 404 页面样式 -->
+            <div class="error-card" data-code="404">
+                <iframe src="/404?style=dark" class="preview-frame" scrolling="no"></iframe>
+                <div class="card-content">
+                    <div class="card-header">
+                        <span class="error-code code-404">404 - Dark</span>
+                    </div>
+                    <h3 class="card-title">暗黑风格</h3>
+                    <p class="card-desc">
+                        暗黑红色主题，采用 DM Serif Display 字体，配合细腻的噪点纹理和发光效果，营造神秘氛围。
+                    </p>
+                    <div class="card-actions">
+                        <a href="/404?style=dark" target="_blank" class="btn btn-primary">全屏预览</a>
+                        <button class="btn" onclick="copyURL('/404?style=dark')">复制链接</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 502 页面样式 -->
+            <div class="error-card" data-code="502">
+                <iframe src="/502?style=warm" class="preview-frame" scrolling="no"></iframe>
+                <div class="card-content">
+                    <div class="card-header">
+                        <span class="error-code code-502">502 - Warm</span>
+                    </div>
+                    <h3 class="card-title">暖色风格</h3>
+                    <p class="card-desc">
+                        暖色橙色主题，使用温暖的色调表达连接中断的状态。柔和的渐变背景配合优雅的排版。
+                    </p>
+                    <div class="card-actions">
+                        <a href="/502?style=warm" target="_blank" class="btn btn-primary">全屏预览</a>
+                        <button class="btn" onclick="copyURL('/502?style=warm')">复制链接</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 503 页面样式 -->
+            <div class="error-card" data-code="503">
+                <iframe src="/503?style=cool" class="preview-frame" scrolling="no"></iframe>
+                <div class="card-content">
+                    <div class="card-header">
+                        <span class="error-code code-503">503 - Cool</span>
+                    </div>
+                    <h3 class="card-title">冷色风格</h3>
+                    <p class="card-desc">
+                        冷色蓝色主题，采用冷静的蓝色调呈现服务暂时失效的状态。科技感的设计语言。
+                    </p>
+                    <div class="card-actions">
+                        <a href="/503?style=cool" target="_blank" class="btn btn-primary">全屏预览</a>
+                        <button class="btn" onclick="copyURL('/503?style=cool')">复制链接</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="usage-section">
+            <h3 class="usage-title">💡 如何使用</h3>
+            <p class="usage-desc">
+                使用你的专属 Token 访问错误页面，每次访问会自动计数。将以下 URL 格式应用到你的项目中：
+            </p>
+            <div class="url-display">
+                https://your-domain.com/404?style=dark&token=YOUR_TOKEN
+            </div>
+            <p class="usage-desc" style="margin-top: 1rem;">
+                <strong>提示：</strong>如果你还没有 Token，请返回<a href="/" style="color: var(--accent-red); text-decoration: none;">首页</a>生成一个。
+            </p>
+        </div>
+    </div>
+
+    <script>
+        function copyURL(path) {
+            const url = window.location.origin + path + '&token=YOUR_TOKEN';
+            navigator.clipboard.writeText(url).then(() => {
+                alert('链接已复制到剪贴板！\n记得替换 YOUR_TOKEN 为你的实际 Token');
+            }).catch(err => {
+                console.error('复制失败:', err);
+            });
+        }
+
+        // 筛选功能
+        const tabs = document.querySelectorAll('.tab-btn');
+        const cards = document.querySelectorAll('.error-card');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const code = tab.dataset.code;
+
+                // 更新激活状态
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+
+                // 筛选卡片
+                cards.forEach(card => {
+                    if (code === 'all' || card.dataset.code === code) {
+                        card.classList.remove('hidden');
+                    } else {
+                        card.classList.add('hidden');
+                    }
+                });
+
+                // 更新 URL
+                const url = new URL(window.location);
+                if (code === 'all') {
+                    url.searchParams.delete('code');
+                } else {
+                    url.searchParams.set('code', code);
+                }
+                window.history.pushState({}, '', url);
+            });
+        });
+
+        // 页面加载时根据 URL 参数筛选
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const code = urlParams.get('code');
+
+            if (code) {
+                const tab = document.querySelector(`[data-code="${code}"]`);
+                if (tab) {
+                    tab.click();
+                }
+            }
+        });
+    </script>
+</body>
+</html>

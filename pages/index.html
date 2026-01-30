@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happiness Secrets - 错误页面 API 服务</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Karla:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #1a1a1a;
+            --text-primary: #e8e8e8;
+            --text-secondary: #8a8a8a;
+            --accent-red: #ff4757;
+            --accent-orange: #ff8c42;
+            --accent-blue: #4287f5;
+        }
+
+        body {
+            font-family: 'Karla', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .noise {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 5rem;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            font-family: 'DM Serif Display', serif;
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 400;
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, var(--accent-red), var(--accent-orange), var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: clamp(1rem, 2vw, 1.25rem);
+            color: var(--text-secondary);
+            font-weight: 300;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+
+        .token-generator {
+            background: var(--bg-secondary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            padding: 2rem;
+            margin: 3rem auto;
+            max-width: 600px;
+            animation: fadeIn 0.8s ease-out 0.2s both;
+        }
+
+        .token-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .token-desc {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .token-display {
+            background: var(--bg-primary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            padding: 1rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            word-break: break-all;
+            margin-bottom: 1rem;
+            min-height: 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent-orange);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 0.75rem 1.5rem;
+            background: var(--accent-red);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background: #ff3545;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: var(--bg-primary);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-top: 0.5rem;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 5rem;
+        }
+
+        .preview-card {
+            background: var(--bg-secondary);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            animation: fadeIn 0.8s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .preview-card:nth-child(1) { animation-delay: 0.3s; }
+        .preview-card:nth-child(2) { animation-delay: 0.4s; }
+        .preview-card:nth-child(3) { animation-delay: 0.5s; }
+
+        .preview-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .preview-image {
+            width: 100%;
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'DM Serif Display', serif;
+            font-size: 4rem;
+            font-weight: 400;
+        }
+
+        .preview-image.error-404 {
+            background: linear-gradient(135deg, rgba(255, 71, 87, 0.1), rgba(255, 71, 87, 0.05));
+            color: var(--accent-red);
+        }
+
+        .preview-image.error-502 {
+            background: linear-gradient(135deg, rgba(255, 140, 66, 0.1), rgba(255, 140, 66, 0.05));
+            color: var(--accent-orange);
+        }
+
+        .preview-image.error-503 {
+            background: linear-gradient(135deg, rgba(66, 135, 245, 0.1), rgba(66, 135, 245, 0.05));
+            color: var(--accent-blue);
+        }
+
+        .preview-content {
+            padding: 1.5rem;
+        }
+
+        .preview-title {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .preview-desc {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .preview-link {
+            display: inline-block;
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 0.85rem;
+            padding: 0.5rem 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .preview-link:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .section-title {
+            font-family: 'DM Serif Display', serif;
+            font-size: clamp(2rem, 4vw, 3rem);
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .code-section {
+            background: var(--bg-secondary);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            animation: fadeIn 0.8s ease-out 0.6s both;
+        }
+
+        .code-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        pre {
+            background: var(--bg-primary);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+            padding: 1.5rem;
+            overflow-x: auto;
+            font-size: 0.85rem;
+            line-height: 1.6;
+        }
+
+        code {
+            font-family: 'Courier New', monospace;
+            color: var(--accent-orange);
+        }
+
+        footer {
+            text-align: center;
+            padding: 3rem 0;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 2rem 1rem;
+            }
+
+            .preview-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="noise"></div>
+    
+    <div class="container">
+        <header>
+            <h1>Happiness Secrets</h1>
+            <p class="subtitle">
+                精心设计的错误页面 API 服务<br>
+                探索"不可及"的哲学隐喻
+            </p>
+        </header>
+
+        <div class="token-generator">
+            <h3 class="token-title">🔑 生成你的专属 Token</h3>
+            <p class="token-desc">
+                每个 Token 独立追踪访问统计，数据由你自己管理
+            </p>
+            <div class="token-display" id="tokenDisplay">
+                点击下方按钮生成 Token
+            </div>
+            <button class="btn" onclick="generateToken()">生成新 Token</button>
+            <button class="btn btn-secondary" onclick="copyToken()" id="copyBtn" style="display:none;">复制 Token</button>
+        </div>
+
+        <section class="preview-section">
+            <h2 class="section-title">错误页面预览</h2>
+            <p style="text-align: center; color: var(--text-secondary); margin-bottom: 2rem;">
+                每个错误码都有多种设计风格可选
+            </p>
+            <div class="preview-grid">
+                <div class="preview-card">
+                    <div class="preview-image error-404">404</div>
+                    <div class="preview-content">
+                        <h3 class="preview-title">页面未找到</h3>
+                        <p class="preview-desc">多种暗黑、简约、创意风格可选</p>
+                        <a href="/gallery?code=404" class="preview-link">查看所有 404 样式 →</a>
+                    </div>
+                </div>
+
+                <div class="preview-card">
+                    <div class="preview-image error-502">502</div>
+                    <div class="preview-content">
+                        <h3 class="preview-title">网关错误</h3>
+                        <p class="preview-desc">暖色、简约、科技风格可选</p>
+                        <a href="/gallery?code=502" class="preview-link">查看所有 502 样式 →</a>
+                    </div>
+                </div>
+
+                <div class="preview-card">
+                    <div class="preview-image error-503">503</div>
+                    <div class="preview-content">
+                        <h3 class="preview-title">服务不可用</h3>
+                        <p class="preview-desc">冷色、简约、现代风格可选</p>
+                        <a href="/gallery?code=503" class="preview-link">查看所有 503 样式 →</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="code-section">
+            <h3 class="code-title">📖 使用文档</h3>
+            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+                使用 Token 参数访问错误页面，每次访问会自动计数并返回统计数据
+            </p>
+            <pre><code># 基本用法
+https://your-domain.com/404?token=YOUR_TOKEN
+https://your-domain.com/502?token=YOUR_TOKEN
+https://your-domain.com/503?token=YOUR_TOKEN
+
+# API 端点（返回 HTML + 统计数据）
+GET /api/error?code=404&token=YOUR_TOKEN
+
+# 响应头包含访问统计
+X-Visit-Count: 123</code></pre>
+        </section>
+
+        <section class="code-section">
+            <h3 class="code-title">🌐 Nginx 集成</h3>
+            <pre><code>server {
+    listen 80;
+    server_name your-domain.com;
+
+    # 自定义错误页面（带 Token）
+    error_page 404 https://happiness-secrets.example.com/404?token=YOUR_TOKEN;
+    error_page 502 https://happiness-secrets.example.com/502?token=YOUR_TOKEN;
+    error_page 503 https://happiness-secrets.example.com/503?token=YOUR_TOKEN;
+
+    location / {
+        proxy_pass http://localhost:8080;
+    }
+}</code></pre>
+        </section>
+
+        <section class="code-section">
+            <h3 class="code-title">💻 JavaScript 集成</h3>
+            <pre><code>// 获取错误页面并读取访问统计
+async function loadErrorPage(code, token) {
+    const response = await fetch(
+        `https://happiness-secrets.example.com/api/error?code=${code}&token=${token}`
+    );
+    
+    // 从响应头获取访问统计
+    const visitCount = response.headers.get('X-Visit-Count');
+    console.log('访问次数:', visitCount);
+    
+    // 获取 HTML 内容
+    const html = await response.text();
+    document.open();
+    document.write(html);
+    document.close();
+}
+
+// 使用示例
+const myToken = 'YOUR_TOKEN';
+loadErrorPage('404', myToken);</code></pre>
+        </section>
+
+        <section class="code-section">
+            <h3 class="code-title">⚛️ React 集成示例</h3>
+            <pre><code>import { useEffect, useState } from 'react';
+
+function ErrorPage({ code = '404', token }) {
+    const [html, setHtml] = useState('');
+    const [visitCount, setVisitCount] = useState(0);
+
+    useEffect(() => {
+        fetch(`https://happiness-secrets.example.com/api/error?code=${code}&token=${token}`)
+            .then(res => {
+                setVisitCount(res.headers.get('X-Visit-Count'));
+                return res.text();
+            })
+            .then(setHtml)
+            .catch(console.error);
+    }, [code, token]);
+
+    return (
+        <div>
+            <div>访问次数: {visitCount}</div>
+            <div dangerouslySetInnerHTML={{ __html: html }} />
+        </div>
+    );
+}</code></pre>
+        </section>
+
+        <footer>
+            <p>Made with 🎭 and philosophical humor</p>
+        </footer>
+    </div>
+
+    <script>
+        let currentToken = '';
+
+        async function generateToken() {
+            try {
+                const response = await fetch('/api/token', {
+                    method: 'POST'
+                });
+                const data = await response.json();
+                currentToken = data.token;
+                document.getElementById('tokenDisplay').textContent = currentToken;
+                document.getElementById('copyBtn').style.display = 'block';
+            } catch (error) {
+                console.error('Failed to generate token:', error);
+                document.getElementById('tokenDisplay').textContent = '生成失败，请重试';
+            }
+        }
+
+        function copyToken() {
+            if (currentToken) {
+                navigator.clipboard.writeText(currentToken).then(() => {
+                    const btn = document.getElementById('copyBtn');
+                    const originalText = btn.textContent;
+                    btn.textContent = '✓ 已复制';
+                    setTimeout(() => {
+                        btn.textContent = originalText;
+                    }, 2000);
+                });
+            }
+        }
+    </script>
+</body>
+</html>

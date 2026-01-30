@@ -1,0 +1,8 @@
+# 忽略不需要的文件
+*.exe
+happiness-secrets
+data/
+.git
+.gitignore
+README.md
+.kiro/
