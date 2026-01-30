@@ -264,6 +264,51 @@ MIT License
 
 ## 🤝 Contributing
 
+We welcome contributions! If you've designed a beautiful error page and want to share it with the community:
+
+### How to Contribute Your Design
+
+1. **Fork this repository**
+2. **Create a new branch** for your design:
+   ```bash
+   git checkout -b feature/add-404-minimal-style
+   ```
+3. **Add your error page**:
+   - Place your HTML file in the appropriate directory (e.g., `pages/404/your-style.html`)
+   - Follow the existing naming convention: `pages/{error-code}/{style-name}.html`
+   - Ensure your design is self-contained (inline CSS/JS preferred)
+4. **Update the backend** (`main.go`):
+   - Add your style to the corresponding switch case
+5. **Update the gallery** (`pages/gallery.html`):
+   - Add a preview card for your design
+6. **Test your design**:
+   ```bash
+   docker-compose up -d
+   # Visit http://localhost:3000/gallery to preview
+   ```
+7. **Commit and push**:
+   ```bash
+   git add .
+   git commit -m "Add minimal style for 404 page"
+   git push origin feature/add-404-minimal-style
+   ```
+8. **Create a Pull Request** to the `main` branch
+
+### Design Guidelines
+
+- **Self-contained**: Prefer inline CSS and JavaScript
+- **Responsive**: Ensure your design works on mobile devices
+- **Accessible**: Follow accessibility best practices
+- **Unique**: Bring your own creative vision
+- **Lightweight**: Keep file size reasonable
+
+### What We're Looking For
+
+- New styles for existing error codes (404, 502, 503)
+- New error codes (500, 403, etc.)
+- Creative interpretations of the "unattainability" theme
+- Unique typography, color schemes, and animations
+
 Issues and Pull Requests are welcome!
 
 ---

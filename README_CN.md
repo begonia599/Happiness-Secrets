@@ -262,7 +262,52 @@ docker-compose restart
 
 MIT License
 
-## 🤝 贡献
+## 🤝 贡献指南
+
+我们欢迎贡献！如果你设计了一个漂亮的错误页面并想与社区分享：
+
+### 如何贡献你的设计
+
+1. **Fork 这个仓库**
+2. **创建新分支**用于你的设计：
+   ```bash
+   git checkout -b feature/add-404-minimal-style
+   ```
+3. **添加你的错误页面**：
+   - 将你的 HTML 文件放在相应的目录中（例如：`pages/404/your-style.html`）
+   - 遵循现有的命名规范：`pages/{错误码}/{样式名称}.html`
+   - 确保你的设计是自包含的（推荐使用内联 CSS/JS）
+4. **更新后端代码** (`main.go`)：
+   - 在相应的 switch case 中添加你的样式
+5. **更新展示页面** (`pages/gallery.html`)：
+   - 为你的设计添加预览卡片
+6. **测试你的设计**：
+   ```bash
+   docker-compose up -d
+   # 访问 http://localhost:3000/gallery 预览
+   ```
+7. **提交并推送**：
+   ```bash
+   git add .
+   git commit -m "Add minimal style for 404 page"
+   git push origin feature/add-404-minimal-style
+   ```
+8. **创建 Pull Request** 到 `main` 分支
+
+### 设计指南
+
+- **自包含**：优先使用内联 CSS 和 JavaScript
+- **响应式**：确保你的设计在移动设备上正常工作
+- **可访问性**：遵循无障碍最佳实践
+- **独特性**：带来你自己的创意视角
+- **轻量级**：保持文件大小合理
+
+### 我们期待的贡献
+
+- 现有错误码的新样式（404、502、503）
+- 新的错误码（500、403 等）
+- 对"不可及"主题的创意诠释
+- 独特的字体、配色方案和动画效果
 
 欢迎提交 Issue 和 Pull Request！
 
